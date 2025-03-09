@@ -6,4 +6,14 @@ export interface AuthContextType {
     loading: boolean;
     user: User | null;
   }
+
+export interface ITodo {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  status: 'pending' | 'completed';
+  createdAt: string;
+  userId: string;
+}
   

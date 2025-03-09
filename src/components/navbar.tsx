@@ -2,7 +2,7 @@
 
 import { AuthContext } from "@/providers/AuthProvider";
 import { AuthContextType } from "@/types";
-import { CheckCircle2, LogOutIcon, User } from "lucide-react";
+import { CheckCircle2, User } from "lucide-react";
 import Image from "next/image";
 import { useContext } from "react";
 
@@ -11,7 +11,7 @@ function Navbar() {
   const { user } = auth;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100">
       <nav className="bg-white shadow-sm border-b border-gray-100">
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -22,13 +22,13 @@ function Navbar() {
               </span>
             </div>
             <div className="flex items-center gap-6">
-              <div className="hidden md:block">
-                {user ? (
+              <div className="">
+                {user && (
                   <div>
                     {user.photoURL ? (
                       <Image
-                        height={35}
-                        width={35}
+                        height={30}
+                        width={30}
                         src={user.photoURL}
                         alt="User"
                         className="rounded-full"
@@ -37,11 +37,7 @@ function Navbar() {
                       <User size={24} className="text-gray-600" />
                     )}
                   </div>
-                ) : (
-                  <div>
-                    <LogOutIcon />
-                  </div>
-                )}
+                )  }
               </div>
 
             </div>
