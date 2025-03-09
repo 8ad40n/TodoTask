@@ -12,8 +12,7 @@ function App() {
   const handleGoogle = () =>{
     LoginWithGoogle()
     .then((result)=>{
-      console.log("Login Success", result.user);
-      toast.success("Successfully logged in");
+      toast.success(`Welcome ${result.user.displayName}`);
       router.push("/todo")
     })
     .catch((error) => {

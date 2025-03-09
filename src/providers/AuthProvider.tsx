@@ -52,7 +52,7 @@ export default function AuthProvider({
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        console.log("User in Auth state change ", currentUser);
+        //console.log("User in Auth state change ", currentUser);
         setUser(currentUser);
         setLoading(false);
       }

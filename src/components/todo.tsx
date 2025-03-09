@@ -41,7 +41,7 @@ import {
     updateDoc,
     where,
 } from "firebase/firestore";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -61,8 +61,7 @@ const Todo = () => {
 
   const { user } = useContext(AuthContext);
 
-  // Fetch todos from Firestore
-  const fetchTodos = async () => {
+  const fetchTodos = useCallback(async () => {
     try {
       if (!user || !user.uid) {
         setTodos([]);
@@ -72,7 +71,6 @@ const Todo = () => {
 
       setLoading(true);
       const todosRef = collection(db, "todos");
-      // Add where clause to filter by userId
       const q = query(
         todosRef,
         where("userId", "==", user.uid),
@@ -88,7 +86,7 @@ const Todo = () => {
           id: doc.id,
           title: data.title,
           description: data.description || "",
-          dueDate: data.dueDate.toDate().toISOString().split("T")[0],
+          dueDate: dayjs(data.dueDate.toDate()).format("YYYY-MM-DD"),
           status: data.status,
           createdAt: data.createdAt.toDate().toISOString(),
           userId: data.userId,
@@ -102,12 +100,11 @@ const Todo = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, messageApi]);
 
-  // Load todos on component mount or when user changes
   useEffect(() => {
     fetchTodos();
-  }, [user]);
+  }, [user, fetchTodos]);
 
   const filteredTodos = todos
     .filter((todo) => {
@@ -149,7 +146,6 @@ const Todo = () => {
     setIsModalOpen(false);
   };
 
-  // Add a new todo to Firestore
   const addTodo = async (
     title: string,
     description: string,
@@ -170,10 +166,10 @@ const Todo = () => {
         dueDate: Timestamp.fromDate(dueDate.toDate()),
         status: "pending",
         createdAt: Timestamp.fromDate(new Date()),
-        userId: user.uid, // Add the user ID to the todo
+        userId: user.uid, 
       };
 
-      const docRef = await addDoc(todosRef, newTodo);
+      await addDoc(todosRef, newTodo);
 
       messageApi.success("Todo added successfully");
       fetchTodos();
@@ -185,7 +181,6 @@ const Todo = () => {
     }
   };
 
-  // Update an existing todo in Firestore
   const updateTodo = async (
     id: string,
     title: string,
@@ -217,7 +212,11 @@ const Todo = () => {
     }
   };
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: {
+    title: string;
+    description: string;
+    dueDate: dayjs.Dayjs;
+  }) => {
     const { title, description, dueDate } = values;
 
     if (isEditMode && currentTodo) {
@@ -229,7 +228,6 @@ const Todo = () => {
     setIsModalOpen(false);
   };
 
-  // Update todo status in Firestore
   const toggleTodoStatus = async (id: string, currentStatus: string) => {
     try {
       if (!user || !user.uid) {
@@ -255,7 +253,6 @@ const Todo = () => {
     }
   };
 
-  // Delete todo from Firestore
   const deleteTodo = async (id: string) => {
     try {
       if (!user || !user.uid) {
@@ -278,7 +275,6 @@ const Todo = () => {
     }
   };
 
-  // Light theme custom colors
   const lightTheme = {
     token: {
       colorPrimary: "#6d28d9",
@@ -560,6 +556,7 @@ const Todo = () => {
                   return current && current < dayjs().startOf("day");
                 }}
                 size="middle"
+                value={currentTodo ? dayjs(currentTodo.dueDate) : null} 
               />
             </Form.Item>
 

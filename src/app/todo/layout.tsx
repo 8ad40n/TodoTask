@@ -8,6 +8,8 @@ export default function RootLayout({
 }>) {
   return <div>
     <Navbar></Navbar>
+    <div className="mt-16">
     {children}
+    </div>
     </div>;
 }
